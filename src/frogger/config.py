@@ -6,29 +6,42 @@ class BaseConfig:
     def keys(self) -> list[str]:
         return [f.name for f in fields(self)]
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str):
         return getattr(self, key)
 
 
 @dataclass
+class EnvSetup(BaseConfig):
+    id: str = "ALE/Frogger-v5"
+    # id: str = "ALE/Breakout-v5"
+    mode: Literal[0, 1, 2] = 0
+    difficulty: Literal[0, 1] = 0
+
+
+@dataclass
 class TrainingConfig(BaseConfig):
-    seed: int = 2000
+    env_id: str = EnvSetup.id
+    seed: int = 1000
     num_envs: int = 8
     num_steps: int = 128
-    total_timesteps: int = 5_000_000
+    total_timesteps: int = 50_000_000
     total_updates: int = total_timesteps // (num_envs * num_steps)
     checkpoint_window: int = 20
     learning_rate: float = 2.5e-4
-    resume_checkpoint: str | None = None
-    # resume_checkpoint: str | None = (
-    #     r"checkpoints\Frogger__envs_8__steps_128__lr_0.00025__seed_2000\best_agent_score_9.00.pt"
-    # )
+    # resume_checkpoint: str | None = None
+    resume_checkpoint: str | None = (
+        r"checkpoints\Frogger-v5__envs_8__steps_128__lr_0.00025__seed_1000\best_agent_score_35.15.pt"
+    )
 
     @property
     def run_name(self) -> str:
-        """Nombre descriptivo para comparar corridas automáticamente en TensorBoard."""
+        """Nombre descriptivo para comparar corridas en TensorBoard/checkpoints.
+        Se arma a partir de env_id, asi que cambiar de juego genera
+        automaticamente un run_name distinto sin tocar nada mas."""
+        env_slug = self.env_id.split("/")[-1]
         return (
-            f"Frogger__envs_{self.num_envs}"
+            f"{env_slug}"
+            f"__envs_{self.num_envs}"
             f"__steps_{self.num_steps}"
             f"__lr_{self.learning_rate}"
             f"__seed_{self.seed}"
@@ -44,17 +57,10 @@ class GeneralConfig(BaseConfig):
 
 
 @dataclass
-class EnvSetup(BaseConfig):
-    id: str = "ALE/Frogger-v5"
-    mode: Literal[0, 1, 2] = 0
-    difficulty: Literal[0, 1] = 0
-
-
-@dataclass
 class AtariPreprocessingArgs(BaseConfig):
-    noop_max: int = 30
-    frame_skip: int = 2
+    noop_max: int = 50
+    frame_skip: int = 4
     screen_size: int = 84
-    terminal_on_life_loss: bool = True
+    terminal_on_life_loss: bool = False
     grayscale_obs: bool = True
     scale_obs: bool = False

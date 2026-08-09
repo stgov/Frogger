@@ -1,5 +1,4 @@
 import argparse
-from dataclasses import asdict, dataclass
 from typing import Literal
 
 import ale_py
@@ -7,45 +6,21 @@ import gymnasium as gym
 import torch
 
 from frogger.agent import ImpalaPPOAgent
-
-
-@dataclass
-class GeneralConfig:
-    obs_type: Literal["rgb", "ram", "grayscale"] = "grayscale"
-    full_action_space: bool = False
-    frameskip: int = 1
-
-
-@dataclass
-class EnvSetup:
-    id: str = "ALE/Frogger-v5"
-    mode: Literal[0, 1, 2] = 0
-    difficulty: Literal[0, 1] = 1
+from frogger.config import AtariPreprocessingArgs, EnvSetup, GeneralConfig
 
 
 def make_eval_env(
     render_mode: Literal["human", "rgb_array", "ansi", "rgb_array_list", "ansi_list"] = "human",
-    config: GeneralConfig = GeneralConfig(),
-    setup: EnvSetup = EnvSetup(),
 ):
     gym.register_envs(ale_py)
 
     env = gym.make(
-        **asdict(config),
-        **asdict(setup),
-        render_mode=render_mode,
+        **GeneralConfig(render_mode=render_mode),
+        **EnvSetup(),
     )
 
     # Apply standard preprocessing wrappers (must match training pipeline)
-    env = gym.wrappers.AtariPreprocessing(
-        env,
-        noop_max=30,
-        frame_skip=4,
-        screen_size=84,
-        terminal_on_life_loss=True,
-        grayscale_obs=True,
-        scale_obs=False,
-    )
+    env = gym.wrappers.AtariPreprocessing(env, **AtariPreprocessingArgs())
 
     env = gym.wrappers.FrameStackObservation(env, stack_size=4)
     return env
