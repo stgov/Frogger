@@ -13,8 +13,8 @@ import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from frogger.agent import AgentOutput, ImpalaPPOAgent
-from frogger.config import (
+from deep_rl_agent.agent import AgentOutput, ImpalaPPOAgent
+from deep_rl_agent.config import (
     AtariPreprocessingArgs,
     EnvSetup,
     GeneralConfig,

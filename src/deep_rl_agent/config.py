@@ -12,8 +12,9 @@ class BaseConfig:
 
 @dataclass
 class EnvSetup(BaseConfig):
-    id: str = "ALE/Frogger-v5"
-    # id: str = "ALE/Breakout-v5"
+    # id: str = "ALE/Frogger-v5"
+    id: str = "ALE/Breakout-v5"
+    # id: str = "ALE/SpaceInvaders-v5"
     mode: Literal[0, 1, 2] = 0
     difficulty: Literal[0, 1] = 0
 
@@ -24,14 +25,11 @@ class TrainingConfig(BaseConfig):
     seed: int = 1000
     num_envs: int = 8
     num_steps: int = 128
-    total_timesteps: int = 50_000_000
+    total_timesteps: int = 10_000_000
     total_updates: int = total_timesteps // (num_envs * num_steps)
     checkpoint_window: int = 20
     learning_rate: float = 2.5e-4
-    # resume_checkpoint: str | None = None
-    resume_checkpoint: str | None = (
-        r"checkpoints\Frogger-v5__envs_8__steps_128__lr_0.00025__seed_1000\best_agent_score_35.15.pt"
-    )
+    resume_checkpoint: str | None = None
 
     @property
     def run_name(self) -> str:

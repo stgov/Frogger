@@ -1,5 +1,5 @@
 """
-Deja jugar Frogger con el teclado y graba las transiciones (obs, accion)
+Deja jugar deep_rl_agent con el teclado y graba las transiciones (obs, accion)
 usando EXACTAMENTE el mismo pipeline de preprocesamiento que el
 entrenamiento (frame skip, grayscale, resize a 84x84, frame stack de 4),
 para que las demostraciones sean directamente utilizables por
@@ -26,7 +26,7 @@ import gymnasium as gym
 import numpy as np
 import pygame
 
-from frogger.config import AtariPreprocessingArgs, EnvSetup, GeneralConfig, TrainingConfig
+from deep_rl_agent.config import AtariPreprocessingArgs, EnvSetup, GeneralConfig, TrainingConfig
 
 t_config = TrainingConfig()
 
@@ -94,7 +94,7 @@ def main() -> None:
     frame = env.render()
     h, w = frame.shape[0] * UPSCALE, frame.shape[1] * UPSCALE
     screen = pygame.display.set_mode((w, h))
-    pygame.display.set_caption("Frogger")
+    pygame.display.set_caption("deep_rl_agent")
     clock = pygame.time.Clock()
 
     keymap = build_keymap(env)

@@ -17,8 +17,6 @@ class AgentOutput(NamedTuple):
 
 
 class BaseAgent(ABC):
-    """Abstract Base Class defining the agent contract for vector environments."""
-
     def __init__(
         self,
         observation_space: gym.Space,

@@ -35,8 +35,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from frogger.agent import ImpalaPPOAgent
-from frogger.config import AtariPreprocessingArgs, EnvSetup, GeneralConfig, TrainingConfig
+from deep_rl_agent.agent import ImpalaPPOAgent
+from deep_rl_agent.config import AtariPreprocessingArgs, EnvSetup, GeneralConfig, TrainingConfig
 
 t_config = TrainingConfig()
 

@@ -5,8 +5,8 @@ import ale_py
 import gymnasium as gym
 import torch
 
-from frogger.agent import ImpalaPPOAgent
-from frogger.config import AtariPreprocessingArgs, EnvSetup, GeneralConfig
+from deep_rl_agent.agent import ImpalaPPOAgent
+from deep_rl_agent.config import AtariPreprocessingArgs, EnvSetup, GeneralConfig, TrainingConfig
 
 
 def make_eval_env(
@@ -14,6 +14,7 @@ def make_eval_env(
 ):
     gym.register_envs(ale_py)
 
+    # pyrefly: ignore [missing-argument]
     env = gym.make(
         **GeneralConfig(render_mode=render_mode),
         **EnvSetup(),
@@ -35,18 +36,16 @@ def evaluate(
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     render_mode = "rgb_array" if record_video else "human"
 
-    # 1. Create Environment
     env = make_eval_env(render_mode=render_mode)
 
     if record_video:
         env = gym.wrappers.RecordVideo(
             env,
             video_folder=video_folder,
-            name_prefix="impala_frogger",
-            episode_trigger=lambda ep: True,  # Record all evaluation episodes
+            name_prefix=f"{TrainingConfig.run_name}",
+            episode_trigger=lambda ep: True,
         )
 
-    # 2. Instantiate Agent & Load Checkpoint
     agent = ImpalaPPOAgent(
         observation_space=env.observation_space,
         action_space=env.action_space,
@@ -57,7 +56,6 @@ def evaluate(
     agent.load(checkpoint_path)
     agent.network.eval()
 
-    # 3. Evaluation Loop
     for episode in range(1, episodes + 1):
         obs, info = env.reset()
         episode_over = False
@@ -87,7 +85,7 @@ def evaluate(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Visualize trained RL Agent playing Frogger")
+    parser = argparse.ArgumentParser(description="Visualize trained RL Agent playing deep_rl_agent")
     parser.add_argument(
         "--checkpoint",
         type=str,
