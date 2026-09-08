@@ -6,7 +6,14 @@ import gymnasium as gym
 import torch
 
 from deep_rl_agent.agent import ImpalaPPOAgent
-from deep_rl_agent.config import AtariPreprocessingArgs, EnvSetup, GeneralConfig, TrainingConfig
+from deep_rl_agent.config import (
+    AUTO_FIRE,
+    AtariPreprocessingArgs,
+    EnvSetup,
+    GeneralConfig,
+    TrainingConfig,
+)
+from deep_rl_agent.env_wrappers import FireResetEnv
 
 
 def make_eval_env(
@@ -19,6 +26,8 @@ def make_eval_env(
         **GeneralConfig(render_mode=render_mode),
         **EnvSetup(),
     )
+
+    env = FireResetEnv(env) if AUTO_FIRE else env
 
     # Apply standard preprocessing wrappers (must match training pipeline)
     env = gym.wrappers.AtariPreprocessing(env, **AtariPreprocessingArgs())

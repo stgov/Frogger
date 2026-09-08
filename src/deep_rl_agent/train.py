@@ -15,11 +15,14 @@ from torch.utils.tensorboard import SummaryWriter
 
 from deep_rl_agent.agent import AgentOutput, ImpalaPPOAgent
 from deep_rl_agent.config import (
+    AUTO_FIRE,
+    MAX_EPISODE_STEPS,
     AtariPreprocessingArgs,
     EnvSetup,
     GeneralConfig,
     TrainingConfig,
 )
+from deep_rl_agent.env_wrappers import FireResetEnv
 
 t_config = TrainingConfig()
 
@@ -104,6 +107,8 @@ def make_env(seed_offset: int = 0):
     def thunk() -> gym.core.Env:
         gym.register_envs(ale_py)
         env = gym.make(**GeneralConfig(), **EnvSetup())
+        env = FireResetEnv(env) if AUTO_FIRE else env
+        env = gym.wrappers.TimeLimit(env, max_episode_steps=MAX_EPISODE_STEPS)
         env = gym.wrappers.AtariPreprocessing(env, **AtariPreprocessingArgs())
         env = gym.wrappers.FrameStackObservation(env, stack_size=4)
         env.action_space.seed(t_config.seed + seed_offset)

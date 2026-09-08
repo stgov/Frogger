@@ -19,6 +19,10 @@ class EnvSetup(BaseConfig):
     difficulty: Literal[0, 1] = 0
 
 
+AUTO_FIRE: bool = True
+MAX_EPISODE_STEPS: int = 1000
+
+
 @dataclass
 class TrainingConfig(BaseConfig):
     env_id: str = EnvSetup.id

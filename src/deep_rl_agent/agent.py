@@ -78,7 +78,7 @@ class ConvSequence(nn.Module):
 
 class ImpalaCNN(nn.Module):
     def __init__(
-        self, in_channels: int = 4, depth_channels: tuple[int, ...] = (16, 32, 32)
+        self, in_channels: int = 4, depth_channels: tuple[int, ...] = (64, 128, 128)
     ) -> None:
         super().__init__()
         layers = []
@@ -104,17 +104,19 @@ class ActorCriticNetwork(nn.Module):
             dummy = torch.zeros(1, in_channels, 84, 84)
             hidden_dim = self.encoder(dummy).shape[1]
 
-        self.fc = nn.Sequential(nn.Linear(hidden_dim, 512), nn.ReLU())
+        self.actor_fc = nn.Sequential(nn.Linear(hidden_dim, 512), nn.ReLU())
+        self.critic_fc = nn.Sequential(nn.Linear(hidden_dim, 512), nn.ReLU())
+
         self.actor = nn.Linear(512, num_actions)
         self.critic = nn.Linear(512, 1)
 
-    def get_features(self, x: torch.Tensor) -> torch.Tensor:
-        x = x.float() / 255.0
-        return self.fc(self.encoder(x))
-
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        features = self.get_features(x)
-        return self.actor(features), self.critic(features)
+        features = self.encoder(x.float() / 255.0)
+
+        actor_features = self.actor_fc(features)
+        critic_features = self.critic_fc(features)
+
+        return self.actor(actor_features), self.critic(critic_features)
 
 
 def compute_gae(
