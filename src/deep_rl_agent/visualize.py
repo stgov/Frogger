@@ -51,7 +51,7 @@ def evaluate(
         env = gym.wrappers.RecordVideo(
             env,
             video_folder=video_folder,
-            name_prefix=f"{TrainingConfig.run_name}",
+            name_prefix=f"{TrainingConfig().run_name}",
             episode_trigger=lambda ep: True,
         )
 
