@@ -1,0 +1,57 @@
+name: Lint and Type Check
+
+"on":
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ruff:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --group dev
+
+      # ruff discovers *.ipynb files by default (since v0.6.0), so .py and
+      # .ipynb files are linted/formatted together with no extra config.
+      # No --fix / no missing --check: these only report, never modify files.
+      - name: Run ruff check (lint)
+        run: uv run ruff check .
+
+      - name: Run ruff format (check only)
+        run: uv run ruff format --check .
+
+  pyrefly:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --group dev
+
+      # project-includes in pyproject.toml must list **/*.ipynb (alongside
+      # **/*.py) for pyrefly to type-check notebooks. Read-only check —
+      # does not modify any files.
+      - name: Run pyrefly check
+        run: uv run pyrefly check

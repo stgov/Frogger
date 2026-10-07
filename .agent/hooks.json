@@ -1,0 +1,23 @@
+{
+  "deterministic-evaluator": {
+    "PostToolUse": [
+      {
+        "matcher": "replace_file_content|write_to_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python scripts/eval_change.py",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "uv run python scripts/inject_eval_feedback.py",
+        "timeout": 10
+      }
+    ]
+  }
+}

@@ -14,3 +14,7 @@ runs
 demonstrations
 logs
 recordings
+# Shadow Git & Agent Tools
+.git-agent/
+agent-git.ps1
+.agent/state/

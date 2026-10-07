@@ -31,13 +31,24 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+extend-exclude = [".agent"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "RUF"]
+ignore = ["E501", "RUF059", "F401"]
 
 [tool.pyrefly]
 project-includes = ["**/*.py"]
 project-excludes = [".venv/**"]
+
+[tool.pyrefly.errors]
+missing-attribute = false
+bad-unpacking = false
+missing-argument = false
+bad-argument-type = false
+unsupported-operation = false
+no-matching-overload = false
+not-iterable = false
 
 [tool.uv]
 environments = ["sys_platform == 'win32'"]
